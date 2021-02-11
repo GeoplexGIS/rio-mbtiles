@@ -522,7 +522,6 @@ def mbtiles(
                     "INSERT INTO metadata (name, value) VALUES ('bounds', ?);",
                     ("%f,%f,%f,%f" % (west, south, east, north),),
                 )
-            cur.commit()
 
         def insert_results(tile, contents, img_ext=None, image_dump=None):
             """Also a closure."""
@@ -550,7 +549,6 @@ def mbtiles(
                 "VALUES (?, ?, ?, ?);",
                 (tile.z, tile.x, tiley, contents),
             )
-            cursor.commit()
 
         def commit_mbtiles():
             pass
