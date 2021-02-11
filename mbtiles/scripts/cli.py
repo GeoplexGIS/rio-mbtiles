@@ -522,7 +522,7 @@ def mbtiles(
                     "INSERT INTO metadata (name, value) VALUES ('bounds', ?);",
                     ("%f,%f,%f,%f" % (west, south, east, north),),
                 )
-            conn.commit()
+            cur.commit()
 
         def insert_results(tile, contents, img_ext=None, image_dump=None):
             """Also a closure."""
@@ -550,9 +550,10 @@ def mbtiles(
                 "VALUES (?, ?, ?, ?);",
                 (tile.z, tile.x, tiley, contents),
             )
+            cursor.commit()
 
         def commit_mbtiles():
-            conn.commit()
+            pass
 
         if cutline:
 
@@ -593,7 +594,6 @@ def mbtiles(
 
         thediskconn = apsw.Connection(output)
         with thediskconn.backup("main", conn, "main") as backup:
-            backup.step() # copy whole database in one go
+            backup.step()  # copy whole database in one go
 
-        cur.close()
         conn.close()
