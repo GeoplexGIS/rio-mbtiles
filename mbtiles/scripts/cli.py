@@ -453,10 +453,10 @@ def mbtiles(
 
         # Initialize the sqlite db.
         output_exists = os.path.exists(output)
+        appending = False
         if append:
             appending = output_exists
         elif output_exists:
-            appending = False
             log.info("Overwrite mode chosen, unlinking output file.")
             os.unlink(output)
 
