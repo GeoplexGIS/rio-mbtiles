@@ -32,6 +32,7 @@ setup(
     zip_safe=False,
     python_requires=">=2.7.10",
     install_requires=[
+        "apsw>=3.9.2",
         "click",
         "cligj>=0.5",
         "mercantile",

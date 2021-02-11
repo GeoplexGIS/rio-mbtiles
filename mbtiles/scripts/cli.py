@@ -4,7 +4,7 @@ import functools
 import logging
 import math
 import os
-import sqlite3
+import apsw
 import sys
 
 import click
@@ -461,8 +461,7 @@ def mbtiles(
             os.unlink(output)
 
         # workaround for bug here: https://bugs.python.org/issue27126
-        sqlite3.connect(":memory:").close()
-        conn = sqlite3.connect(output)
+        conn = apsw.Connection(":memory:")
 
         def init_mbtiles():
             """Note: this closes over other local variables of the command function."""
@@ -549,7 +548,7 @@ def mbtiles(
                 "INSERT OR REPLACE INTO tiles "
                 "(zoom_level, tile_column, tile_row, tile_data) "
                 "VALUES (?, ?, ?, ?);",
-                (tile.z, tile.x, tiley, sqlite3.Binary(contents)),
+                (tile.z, tile.x, tiley, contents),
             )
 
         def commit_mbtiles():
@@ -591,3 +590,10 @@ def mbtiles(
 
             if pbar is not None:
                 pbar.update(pbar.total - pbar.n)
+
+        thediskconn = apsw.Connection(output)
+        with thediskconn.backup("main", conn, "main") as backup:
+            backup.step() # copy whole database in one go
+
+        cur.close()
+        conn.close()
